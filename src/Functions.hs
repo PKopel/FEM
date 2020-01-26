@@ -1,6 +1,5 @@
 module Functions
-(Func
-,parseRPN
+( parseRPN
 )where
 
 import Data.List  
