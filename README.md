@@ -1,6 +1,6 @@
 # FEM
 
-## Dependencies
+### Dependencies
 * **[haskell-chart](https://github.com/timbod7/haskell-chart/wiki)**
 
 ### Author
