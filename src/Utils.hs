@@ -2,11 +2,16 @@ module Utils
     ( integral
     , thomas
     , partitions
-    , (#)
+    , (#*)
+    , (#/)
+    , (#+)
+    , (#-)
+    , (#^)
+    , cot
     , Func
     ) where
 
-import Functions
+type Func = (Double -> Double)
 
 partitions :: Double -> Double -> [Double] -> [Double]
 partitions d start = map (\x -> start + d * x)
@@ -14,8 +19,23 @@ partitions d start = map (\x -> start + d * x)
 integral :: Func -> Double -> Double -> Double
 integral f a b = ((b-a)/30 *) $ foldl1 (+) [ f x | x <- partitions d a [1,2..30]] where d = (b-a)/30
 
-(#) :: Func -> Func -> Func
-f # g = \x -> (f x) * (g x)
+(#*) :: Func -> Func -> Func
+f #* g = (*) <$> f <*> g
+
+(#/) :: Func -> Func -> Func
+f #/ g = (/) <$> f <*> g
+
+(#+) :: Func -> Func -> Func
+f #+ g = (+) <$> f <*> g
+
+(#-) :: Func -> Func -> Func
+f #- g = (-) <$> f <*> g
+
+(#^) :: Func -> Func -> Func
+f #^ g = (**) <$> f <*> g
+
+cot :: Floating a => a -> a
+cot x = 1/(tan x)
 
 thomas :: [Double] -> [Double] -> [Double] -> [Double] -> [Double]
 thomas as bs cs ds = xs

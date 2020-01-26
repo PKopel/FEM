@@ -3,6 +3,7 @@ module Main where
 import System.IO
 import Functions
 import FEM
+import Utils
 
 import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Backend.Diagrams

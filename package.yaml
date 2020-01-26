@@ -1,6 +1,6 @@
-name:                mes
+name:                fem
 version:             0.1.0.0
-github:              "PKopel/mes"
+github:              "PKopel/FEM"
 license:             BSD3
 author:              "Paweł Kopel"
 maintainer:          "example@example.com"
@@ -28,7 +28,7 @@ library:
   source-dirs: src
 
 executables:
-  mes-exe:
+  fem-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -36,10 +36,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - mes
+    - fem
 
 tests:
-  mes-test:
+  fem-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -47,4 +47,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - mes
+    - fem
