@@ -6,7 +6,7 @@ module Utils
     , Func
     ) where
 
-type Func = (Double -> Double)
+import Functions
 
 partitions :: Double -> Double -> [Double] -> [Double]
 partitions d start = map (\x -> start + d * x)
