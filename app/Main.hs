@@ -22,7 +22,6 @@ main = do
         layout_title .= "Solution"
         plot (line "u(x)" [solve a b c f n nd k l ur])
 
-
 readN :: String -> IO (Int,Double)
 readN msg = putStrLn msg >> (\n -> (read n,read n)) <$> getLine
 
