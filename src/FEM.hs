@@ -2,7 +2,7 @@ module FEM
 (  solve
 ) where
 
-import Utils
+import           Utils
 
 e :: Double -> Double -> Double -> Double
 e xk d x
@@ -21,7 +21,7 @@ bij a b c xi xj d k = let u = e xi d
                           u' = e' xi d
                           v = e xj d
                           v' = e' xj d
-                          (s,t) = if xi == xj then (xi - d, xi + d) else (min xi xj,max xi xj) 
+                          (s,t) = if xi == xj then (xi - d, xi + d) else (min xi xj,max xi xj)
                       in k * (u #* v) 0 + integral (a #* u' #* v') s t + integral (b #* u' #* v) s t + integral (c #* u #* v) s t
 
 
