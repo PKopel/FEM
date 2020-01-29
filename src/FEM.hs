@@ -11,9 +11,9 @@ e xk d x | x < xk && x > xk - d  = (x - xk + d) / d
          | otherwise             = 0
 
 e' :: Double -> Double -> Double -> Double
-e' xk d x | x < xk && x > xk - d  = 1 / d
-          | x >= xk && x < xk + d = -1 / d
-          | otherwise             = 0
+e' xk d x | x < xk && x > xk - d = 1 / d
+          | x > xk && x < xk + d = -1 / d
+          | otherwise            = 0
 
 bij :: Func -> Func -> Func -> Double -> Double -> Double -> Double -> Double
 bij a b c xi xj d k =
@@ -21,16 +21,15 @@ bij a b c xi xj d k =
       u'     = e' xi d
       v      = e xj d
       v'     = e' xj d
-      (s, t) = if xi == xj then (xi - d, xi + d) else (min xi xj, max xi xj)
-  in  k
-        * (u #* v) 0
+      (s, t) = if xi == xj then (max 0 (xi - d),min 1 (xi + d)) else (min xi xj, max xi xj)
+  in  k * (u #* v) 0
         + integral (a #* u' #* v') s t
         + integral (b #* u' #* v)  s t
-        + integral (c #* u #* v)   s t
+        + integral (c #* u  #* v)  s t
 
 
 li :: Func -> Double -> Double -> Double -> Double
-li f xi d k = integral (f #* e xi d) (xi - d) (xi + d) - k * (e xi d 0)
+li f xi d l = integral (f #* e xi d) (xi - d) (xi + d) - l * (e xi d 0)
 
 bijs :: Int -> Double -> Func -> Func -> Func -> Double -> [Double]
 bijs n nd a b c k =
@@ -68,4 +67,4 @@ solve a b c f n nd k l ur =
       bjiList = bjis n nd a b c k
       liList  = lis n nd f l ur
   in  (partitions (1 / nd) 0 [0 .. nd])
-        `zip` (thomas bijList biiList bjiList liList)
+        `zip` (solveM bijList biiList bjiList liList)

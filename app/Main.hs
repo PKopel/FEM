@@ -17,7 +17,6 @@ main = do
     then fileInput $ head args
     else cmdInput
   toFile def (fName ++ ".svg") $ do
-    layout_title .= "Solution"
     plot (line "u(x)" [solve a b c f n nd k l ur])
 
 cmdInput :: IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
