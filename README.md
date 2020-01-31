@@ -1,6 +1,6 @@
 # FEM
 
-Program solves OED-s given by set of equations
+Program solves ODE-s given by set of equations
 ```
 (a(x)u'(x))' + b(x)u'(x) + c(x)u(x) = f(x)
 -a(0)u'(0) + k*u(0) = l
