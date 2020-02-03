@@ -19,7 +19,8 @@ main = do
   toFile def (fName ++ ".svg") $ do
     plot (line "u(x)" [solve a b c f n nd k l ur])
 
-cmdInput :: IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
+cmdInput
+  :: IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
 cmdInput = do
   a       <- readFunc "enter a(x):"
   b       <- readFunc "enter b(x):"
@@ -31,7 +32,8 @@ cmdInput = do
   ur      <- readNum "enter ur:"
   return (a, b, c, f, n, nd, k, l, ur, "chart")
 
-fileInput :: String 
+fileInput
+  :: String
   -> IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
 fileInput fileName = do
   handle  <- openFile fileName ReadMode

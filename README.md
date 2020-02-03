@@ -25,6 +25,7 @@ When run without any arguments, program will ask for input from cmd. Functions s
 
 ### Dependencies
 * **[haskell-chart](https://github.com/timbod7/haskell-chart/wiki)**
+* **[QuickCheck](https://github.com/nick8325/quickcheck)**
 
 ### Author
 * **[Paweł Kopel](https://github.com/PKopel)**
