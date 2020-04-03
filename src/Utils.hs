@@ -2,6 +2,11 @@ module Utils
   ( integral
   , solveM
   , partitions
+  , hasGtPrecedence
+  , hasEqPrecedence
+  , isFunction
+  , isOperator
+  , isLeftAssociative
   , (#*)
   , (#/)
   , (#+)
@@ -9,10 +14,48 @@ module Utils
   , (#^)
   , cot
   , Func
+  , Operator
   )
 where
 
 type Func = (Double -> Double)
+type Operator = String
+
+hasGtPrecedence :: Operator -> Operator -> Bool
+hasGtPrecedence op1 op2 = comparePrecedence op1 op2 == GT
+
+hasEqPrecedence :: Operator -> Operator -> Bool
+hasEqPrecedence op1 op2 = comparePrecedence op1 op2 == EQ
+
+comparePrecedence :: Operator -> Operator -> Ordering
+comparePrecedence "(" _   = LT
+comparePrecedence _   "(" = LT
+comparePrecedence "^" _   = GT
+comparePrecedence _   "^" = LT
+comparePrecedence "*" "/" = EQ
+comparePrecedence "/" "*" = EQ
+comparePrecedence "*" _   = GT
+comparePrecedence _   "*" = LT
+comparePrecedence "/" _   = GT
+comparePrecedence _   "/" = LT
+comparePrecedence "+" "-" = EQ
+comparePrecedence "-" "+" = EQ
+comparePrecedence "+" _   = GT
+comparePrecedence _   "+" = LT
+comparePrecedence "-" _   = GT
+comparePrecedence _   "-" = LT
+comparePrecedence _   _   = EQ
+
+
+isOperator :: String -> Bool
+isOperator =
+  (`elem` ["+", "-", "*", "/", "^", "sin", "cos", "ln", "tan", "cot", "(", ")"])
+
+isLeftAssociative :: Operator -> Bool
+isLeftAssociative = (`elem` ["+", "-", "*", "/"])
+
+isFunction :: Operator -> Bool
+isFunction = (`elem` ["sin", "cos", "ln", "tan", "cot"])
 
 partitions :: Double -> Double -> [Double] -> [Double]
 partitions d start = map (\x -> start + d * x)
@@ -54,4 +97,5 @@ solveM as bs cs rs = reverse xs
   d i = (b i) - (a i * c' (i - 1))
   cs' = c 0 / b 0 : [ (c i) / d i | i <- [1 .. n - 2] ]
   rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / (d i) | i <- [1 .. n - 1] ]
-  xs = last rs' : [ (r' i) - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]
+  xs =
+    last rs' : [ (r' i) - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]

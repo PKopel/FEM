@@ -1,7 +1,7 @@
 module Main where
 
 import           FEM
-import           Functions
+import           Parser
 import           System.Environment
 import           System.IO
 import           Utils
@@ -73,10 +73,10 @@ checkNum _   [(n, "")] = return n
 checkNum msg _         = readNum $ errorMsg ++ msg
 
 readFunc :: String -> IO Func
-readFunc msg = putStrLn msg >> parseRPN <$> getLine >>= checkFunc msg
+readFunc msg = putStrLn msg >> (parseRPN . parseToRPN) <$> getLine >>= checkFunc msg
 
 hReadFunc :: Handle -> String -> IO Func
-hReadFunc handle msg = parseRPN <$> hGetLine handle >>= checkFunc msg
+hReadFunc handle msg = (parseRPN . parseToRPN) <$> hGetLine handle >>= checkFunc msg
 
 checkFunc :: String -> [Func] -> IO Func
 checkFunc _   [f] = return f
