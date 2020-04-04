@@ -59,8 +59,7 @@ lis :: Int -> Double -> Func -> Double -> Double -> [Double]
 lis n nd f k ur = [ li f (xks !! i) (1 / nd) k | i <- [0 .. n - 1] ] ++ [ur]
   where xks = partitions (1 / nd) 0 [0 .. nd]
 
-solve
-  :: Func
+solve :: Func
   -> Func
   -> Func
   -> Func

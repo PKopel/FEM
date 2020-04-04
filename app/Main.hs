@@ -14,70 +14,52 @@ main :: IO ()
 main = do
   args <- getArgs
   (a, b, c, f, n, nd, k, l, ur, fName) <- if length args > 0
-    then fileInput $ head args
-    else cmdInput
+    then openFile (head args) ReadMode >>= fileInput (head args) ignStr
+    else fileInput "chart" putStrLn stdin
   toFile def (fName ++ ".svg") $ do
     plot (line "u(x)" [solve a b c f n nd k l ur])
 
-cmdInput
-  :: IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
-cmdInput = do
-  a       <- readFunc "enter a(x):"
-  b       <- readFunc "enter b(x):"
-  c       <- readFunc "enter c(x):"
-  f       <- readFunc "enter f(x):"
-  (n, nd) <- readN "enter n:"
-  k       <- readNum "enter k:"
-  l       <- readNum "enter l:"
-  ur      <- readNum "enter ur:"
-  return (a, b, c, f, n, nd, k, l, ur, "chart")
+ignStr :: String -> IO ()
+ignStr _ = return ()
 
-fileInput
-  :: String
-  -> IO (Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
-fileInput fileName = do
-  handle  <- openFile fileName ReadMode
-  a       <- hReadFunc handle "enter a(x):"
-  b       <- hReadFunc handle "enter b(x):"
-  c       <- hReadFunc handle "enter c(x):"
-  f       <- hReadFunc handle "enter f(x):"
-  (n, nd) <- hReadN handle "enter n:"
-  k       <- hReadNum handle "enter k:"
-  l       <- hReadNum handle "enter l:"
-  ur      <- hReadNum handle "enter ur:"
+fileInput:: String
+  -> (String -> IO ())
+  -> Handle
+  -> IO ( Func, Func, Func, Func, Int, Double, Double, Double, Double, String)
+fileInput fileName msgFunc handle = do
+  a       <- hReadFunc handle msgFunc "enter a(x):"
+  b       <- hReadFunc handle msgFunc "enter b(x):"
+  c       <- hReadFunc handle msgFunc "enter c(x):"
+  f       <- hReadFunc handle msgFunc "enter f(x):"
+  (n, nd) <- hReadN handle msgFunc "enter n:"
+  k       <- hReadNum handle msgFunc "enter k:"
+  l       <- hReadNum handle msgFunc "enter l:"
+  ur      <- hReadNum handle msgFunc "enter ur:"
   hClose handle
   return (a, b, c, f, n, nd, k, l, ur, takeWhile (/= '.') fileName)
 
 errorMsg = "wrong input, "
 
-readN :: String -> IO (Int, Double)
-readN msg =
-  putStrLn msg >> (\n -> (reads n, reads n)) <$> getLine >>= checkN msg
-
-hReadN :: Handle -> String -> IO (Int, Double)
-hReadN handle msg =
-  (\n -> (reads n, reads n)) <$> hGetLine handle >>= checkN msg
+hReadN :: Handle -> (String -> IO ()) -> String -> IO (Int, Double)
+hReadN handle msgFunc msg =
+  msgFunc msg >> (\n -> (reads n, reads n)) <$> hGetLine handle >>= checkN msg
 
 checkN :: String -> ([(Int, String)], [(Double, String)]) -> IO (Int, Double)
 checkN _   ([(n, "")], [(nd, "")]) = return (n, nd)
-checkN msg _                       = readN $ errorMsg ++ msg
+checkN msg _                       = hReadN stdin putStrLn $ errorMsg ++ msg
 
-readNum :: String -> IO Double
-readNum msg = putStrLn msg >> reads <$> getLine >>= checkNum msg
-
-hReadNum :: Handle -> String -> IO Double
-hReadNum handle msg = reads <$> hGetLine handle >>= checkNum msg
+hReadNum :: Handle -> (String -> IO ()) -> String -> IO Double
+hReadNum handle msgFunc msg =
+  msgFunc msg >> reads <$> hGetLine handle >>= checkNum msg
 
 checkNum :: String -> [(Double, String)] -> IO Double
 checkNum _   [(n, "")] = return n
-checkNum msg _         = readNum $ errorMsg ++ msg
+checkNum msg _         = hReadNum stdin putStrLn $ errorMsg ++ msg
 
-readFunc :: String -> IO Func
-readFunc msg = putStrLn msg >> (parseRPN . parseToRPN) <$> getLine >>= checkFunc msg
-
-hReadFunc :: Handle -> String -> IO Func
-hReadFunc handle msg = (parseRPN . parseToRPN) <$> hGetLine handle >>= checkFunc msg
+hReadFunc :: Handle -> (String -> IO ()) -> String -> IO Func
+hReadFunc handle msgFunc msg =
+  msgFunc msg >> (parseRPN . parseToRPN) <$> hGetLine handle >>= checkFunc msg
 
 checkFunc :: String -> [Func] -> IO Func
 checkFunc _   [f] = return f
-checkFunc msg _   = readFunc $ errorMsg ++ msg
+checkFunc msg _   = hReadFunc stdin putStrLn $ errorMsg ++ msg
