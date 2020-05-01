@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9fb0b52f1e15dfe5ea3a58d8a992d6034432f5deba8b405cf6921c1c032e3469
+-- hash: d9cb63b93cceda5e3481f1854a8324bf681ea445143de1e4a9c07df45f91bcff
 
 name:           fem
-version:        0.1.1.1
+version:        0.1.2
 description:    Please see the README on GitHub at <https://github.com/PKopel/fem#readme>
 homepage:       https://github.com/PKopel/FEM#readme
 bug-reports:    https://github.com/PKopel/FEM/issues

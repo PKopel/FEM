@@ -20,16 +20,18 @@ shuntOp :: ([String], [Operator]) -> Operator -> ([String], [Operator])
 shuntOp (out, ("(" : ops)) ")" = (out, ops)
 shuntOp (out, (op : ops) ) ")" = shuntOp (op : out, ops) ")"
 shuntOp (out, (op : ops)) x
-  | (op `hasGtPrecedence` x && (not . isFunction) x)|| 
-    (op `hasEqPrecedence` x && isLeftAssociative x) || 
-    (isFunction op && x /= "(") = shuntOp (op : out, ops) x
-  | otherwise = (out, x : op : ops)
+  | (op `hasGtPrecedence` x && (not . isFunction) x)
+    || (op `hasEqPrecedence` x && isLeftAssociative x)
+    || (isFunction op && x /= "(")
+  = shuntOp (op : out, ops) x
+  | otherwise
+  = (out, x : op : ops)
 shuntOp (out, ops) op = (out, op : ops)
 
-parseRPN :: String -> [Func]
+parseRPN :: String -> [Func Double]
 parseRPN = foldl parse [] . words
 
-parse :: [Func] -> String -> [Func]
+parse :: [Func Double] -> String -> [Func Double]
 parse (f : g : hs) "*"   = (f #* g) : hs
 parse (f : g : hs) "+"   = (f #+ g) : hs
 parse (f : g : hs) "-"   = (g #- f) : hs
