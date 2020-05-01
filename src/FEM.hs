@@ -34,7 +34,7 @@ bij a b c xi xj d k =
       then (max 0 (xi - d), min 1 (xi + d))
       else (min xi xj, max xi xj)
   in
-    ((-1) * k * (u #* v) 0)
+    (-1) * k * (u #* v) 0
     - integral (a #* u' #* v') s t
     + integral (b #* u' #* v)  s t
     + integral (c #* u #* v)   s t

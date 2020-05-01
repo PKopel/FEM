@@ -66,7 +66,7 @@ partitions d start = map (\x -> start + d * fromIntegral x)
 
 integral :: (Fractional a) => Func a -> a -> a -> a
 integral f a b = ((b - a) / 999 *)
-  $ foldl1 (+) [ f x | x <- partitions d a [1 .. 999] ]
+  $ sum [ f x | x <- partitions d a [1 .. 999] ]
   where d = (b - a) / 999
 
 (#*) :: (Fractional a) => Func a -> Func a -> Func a
@@ -85,7 +85,7 @@ f #- g = (-) <$> f <*> g
 f #^ g = (**) <$> f <*> g
 
 cot :: (Floating a) => a -> a
-cot x = 1 / (tan x)
+cot x = 1 / tan x
 
 solveM :: (Fractional a) => [a] -> [a] -> [a] -> [a] -> [a]
 solveM as bs cs rs = reverse xs
@@ -98,7 +98,7 @@ solveM as bs cs rs = reverse xs
   x i = xs !! i
   c' i = cs' !! i
   r' i = rs' !! i
-  d i = (b i) - (a i * c' (i - 1))
-  cs' = c 0 / b 0 : [ (c i) / d i | i <- [1 .. n - 2] ]
-  rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / (d i) | i <- [1 .. n - 1] ]
-  xs = last rs' : [ (r' i) - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]
+  d i = b i - (a i * c' (i - 1))
+  cs' = c 0 / b 0 : [ c i / d i | i <- [1 .. n - 2] ]
+  rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / d i | i <- [1 .. n - 1] ]
+  xs = last rs' : [ r' i - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]

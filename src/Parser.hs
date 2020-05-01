@@ -12,14 +12,14 @@ parseToRPN :: String -> String
 parseToRPN = unwords . shunt ([], []) . words
 
 shunt :: ([String], [Operator]) -> [String] -> [String]
-shunt (out, ops) [] = (reverse out) ++ ops
+shunt (out, ops) [] = reverse out ++ ops
 shunt (out, ops) (x : rest) | isOperator x = shunt (shuntOp (out, ops) x) rest
                             | otherwise    = shunt (x : out, ops) rest
 
 shuntOp :: ([String], [Operator]) -> Operator -> ([String], [Operator])
-shuntOp (out, ("(" : ops)) ")" = (out, ops)
-shuntOp (out, (op : ops) ) ")" = shuntOp (op : out, ops) ")"
-shuntOp (out, (op : ops)) x
+shuntOp (out, "(" : ops) ")" = (out, ops)
+shuntOp (out, op : ops ) ")" = shuntOp (op : out, ops) ")"
+shuntOp (out, op : ops) x
   | (op `hasGtPrecedence` x && (not . isFunction) x)
     || (op `hasEqPrecedence` x && isLeftAssociative x)
     || (isFunction op && x /= "(")
@@ -42,6 +42,6 @@ parse (f     : hs) "sin" = (sin . f) : hs
 parse (f     : hs) "cos" = (cos . f) : hs
 parse (f     : hs) "tan" = (tan . f) : hs
 parse (f     : hs) "cot" = (cot . f) : hs
-parse fs           "e"   = (\_ -> exp 1) : fs
-parse fs           "pi"  = (\_ -> pi) : fs
+parse fs           "e"   = (const exp 1) : fs
+parse fs           "pi"  = (const pi) : fs
 parse fs x = if isLetter $ head x then id : fs else (\_ -> read x) : fs

@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d9cb63b93cceda5e3481f1854a8324bf681ea445143de1e4a9c07df45f91bcff
+-- hash: eeb2a2b632a712a65115797634028f89061f19207fe6907105c1540c649dc0fd
 
 name:           fem
-version:        0.1.2
+version:        0.1.2.1
 description:    Please see the README on GitHub at <https://github.com/PKopel/fem#readme>
 homepage:       https://github.com/PKopel/FEM#readme
 bug-reports:    https://github.com/PKopel/FEM/issues

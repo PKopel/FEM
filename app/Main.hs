@@ -15,10 +15,10 @@ type DFunc = Func Double
 main :: IO ()
 main = do
   args                             <- getArgs
-  (a, b, c, f, n, k, l, ur, fName) <- if length args > 0
+  (a, b, c, f, n, k, l, ur, fName) <- if not (null args)
     then openFile (head args) ReadMode >>= fileInput (head args) ignStr
     else fileInput "chart" putStrLn stdin
-  toFile def (fName ++ ".svg") $ do
+  toFile def (fName ++ ".svg") $ 
     plot (line "u(x)" [solve a b c f n k l ur])
 
 fileInput :: String
@@ -59,7 +59,7 @@ checkNum msg _         = hReadNum stdin putStrLn $ errorMsg ++ msg
 
 hReadFunc :: Handle -> (String -> IO ()) -> String -> IO DFunc
 hReadFunc handle msgFunc msg =
-  msgFunc msg >> (parseRPN . parseToRPN) <$> hGetLine handle >>= checkFunc msg
+  msgFunc msg >> parseRPN . parseToRPN <$> hGetLine handle >>= checkFunc msg
 
 checkFunc :: String -> [DFunc] -> IO DFunc
 checkFunc _   [f] = return f
