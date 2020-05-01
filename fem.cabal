@@ -4,15 +4,15 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: eeb2a2b632a712a65115797634028f89061f19207fe6907105c1540c649dc0fd
+-- hash: 19154689d58ed5d4d36be0ed1e0469678f0f8b639f62f957e9ce74195865588f
 
 name:           fem
-version:        0.1.2.1
+version:        0.1.3
 description:    Please see the README on GitHub at <https://github.com/PKopel/fem#readme>
 homepage:       https://github.com/PKopel/FEM#readme
 bug-reports:    https://github.com/PKopel/FEM/issues
 author:         Paweł Kopel
-maintainer:     example@example.com
+maintainer:     pawel.kopel2@gmail.com
 copyright:      2020 Paweł Kopel
 license:        BSD3
 license-file:   LICENSE
@@ -39,6 +39,7 @@ library
     , Chart-diagrams
     , QuickCheck
     , base >=4.7 && <5
+    , deepseq
   default-language: Haskell2010
 
 executable fem-exe
@@ -47,12 +48,14 @@ executable fem-exe
       Paths_fem
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  default-extensions: BangPatterns
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       Chart
     , Chart-diagrams
     , QuickCheck
     , base >=4.7 && <5
+    , deepseq
     , fem
   default-language: Haskell2010
 
@@ -63,11 +66,13 @@ test-suite fem-test
       Paths_fem
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  default-extensions: BangPatterns
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       Chart
     , Chart-diagrams
     , QuickCheck
     , base >=4.7 && <5
+    , deepseq
     , fem
   default-language: Haskell2010

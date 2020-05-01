@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Utils
   ( ignStr
   , integral
@@ -62,12 +64,11 @@ isFunction :: Operator -> Bool
 isFunction = (`elem` ["sin", "cos", "ln", "tan", "cot"])
 
 partitions :: (Fractional a) => a -> a -> [Int] -> [a]
-partitions d start = map (\x -> start + d * fromIntegral x)
+partitions !d !start = map (\x -> start + d * fromIntegral x)
 
 integral :: (Fractional a) => Func a -> a -> a -> a
-integral f a b = ((b - a) / 999 *)
-  $ sum [ f x | x <- partitions d a [1 .. 999] ]
-  where d = (b - a) / 999
+integral f !a !b = d * sum [ f x | x <- partitions d a [1 .. 999] ]
+  where !d = (b - a) / 999
 
 (#*) :: (Fractional a) => Func a -> Func a -> Func a
 f #* g = (*) <$> f <*> g

@@ -5,3 +5,5 @@ mes.cabal
 *~
 chart.svg
 exe*
+test.*
+report*

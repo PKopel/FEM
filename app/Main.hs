@@ -5,7 +5,6 @@ import           Parser
 import           System.Environment
 import           System.IO
 import           Utils
-import           Data.List
 
 import           Graphics.Rendering.Chart.Backend.Diagrams
 import           Graphics.Rendering.Chart.Easy

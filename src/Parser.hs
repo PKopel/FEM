@@ -5,7 +5,6 @@ module Parser
 where
 
 import           Data.Char
-import           Data.List
 import           Utils
 
 parseToRPN :: String -> String
@@ -42,6 +41,6 @@ parse (f     : hs) "sin" = (sin . f) : hs
 parse (f     : hs) "cos" = (cos . f) : hs
 parse (f     : hs) "tan" = (tan . f) : hs
 parse (f     : hs) "cot" = (cot . f) : hs
-parse fs           "e"   = (const exp 1) : fs
-parse fs           "pi"  = (const pi) : fs
+parse fs           "e"   = const (exp 1) : fs
+parse fs           "pi"  = const pi : fs
 parse fs x = if isLetter $ head x then id : fs else (\_ -> read x) : fs

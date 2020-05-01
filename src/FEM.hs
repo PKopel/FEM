@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module FEM
   ( solve
   )
@@ -6,14 +8,14 @@ where
 import           Utils
 
 e :: (Fractional a, Ord a) => a -> a -> a -> a
-e xk d x | x < xk && x > xk - d  = (x - xk + d) / d
-         | x >= xk && x < xk + d = (xk + d - x) / d
-         | otherwise             = 0
+e xk dx x | x < xk && x > xk - dx  = (x - xk + dx) / dx
+          | x >= xk && x < xk + dx = (xk + dx - x) / dx
+          | otherwise              = 0
 
 e' :: (Fractional a, Ord a) => a -> a -> a -> a
-e' xk d x | x < xk && x > xk - d = 1 / d
-          | x > xk && x < xk + d = -1 / d
-          | otherwise            = 0
+e' xk dx x | x < xk && x > xk - dx = 1 / dx
+           | x > xk && x < xk + dx = -1 / dx
+           | otherwise             = 0
 
 bij :: (Fractional a, Ord a)
   => Func a
@@ -24,48 +26,47 @@ bij :: (Fractional a, Ord a)
   -> a
   -> a
   -> a
-bij a b c xi xj d k =
-  let
-    u      = e xi d
-    u'     = e' xi d
-    v      = e xj d
-    v'     = e' xj d
-    (s, t) = if xi == xj
-      then (max 0 (xi - d), min 1 (xi + d))
+bij a b c !xi !xj !dx !k = result
+  where
+    u      = e xi dx
+    u'     = e' xi dx
+    v      = e xj dx
+    v'     = e' xj dx
+    (!s, !t) = if xi == xj
+      then (max 0 (xi - dx), min 1 (xi + dx))
       else (min xi xj, max xi xj)
-  in
-    (-1) * k * (u #* v) 0
-    - integral (a #* u' #* v') s t
-    + integral (b #* u' #* v)  s t
-    + integral (c #* u #* v)   s t
+    !result =
+      (-1) * k * (u #* v) 0
+      - integral (a #* u' #* v') s t
+      + integral (b #* u' #* v)  s t
+      + integral (c #* u #* v)   s t
 
 
 li :: (Fractional a, Ord a) => Func a -> a -> a -> a -> a
-li f xi d l =
-  let (s, t) = if xi == 0 || xi == 1
-        then (max 0 (xi - d), min 1 (xi + d))
-        else (xi - d, xi + d)
-  in  integral (f #* e xi d) s t - (l * (e xi d 0))
+li f !xi !dx !l = result
+  where
+    (!s, !t) = if xi == 0 || xi == 1
+      then (max 0 (xi - dx), min 1 (xi + dx))
+      else (xi - dx, xi + dx)
+    !result =
+      integral (f #* e xi dx) s t 
+      - (l * e xi dx 0)
 
-bijs :: (Fractional a, Ord a) => Int -> Func a -> Func a -> Func a -> a -> [a]
-bijs n a b c k =
-  [ bij a b c (xks !! i) (xks !! (i + 1)) (1.0 / fromIntegral n) k | i <- [0 .. n - 2] ] ++ [0.0]
-  where xks = partitions (1.0 / fromIntegral n) 0 [0 .. n]
+bijs :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+bijs a b c !dx k xks =
+  [ bij a b c xi (xi + dx) dx k | !xi <- init $ init xks ] ++ [0.0]
 
-biis :: (Fractional a, Ord a) => Int -> Func a -> Func a -> Func a -> a -> [a]
-biis n a b c k =
-  [ bij a b c (xks !! i) (xks !! i) (1.0 / fromIntegral n) k | i <- [0 .. n - 1] ] ++ [1.0]
-  where xks = partitions (1.0 / fromIntegral n) 0 [0 .. n]
+biis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+biis a b c !dx k xks =
+  [ bij a b c xi xi dx k | !xi <- init xks ] ++ [1.0]
 
-bjis :: (Fractional a, Ord a) => Int -> Func a -> Func a -> Func a -> a -> [a]
-bjis n a b c k =
-  [ bij a b c (xks !! (i + 1)) (xks !! i) (1.0 / fromIntegral n) k | i <- [0 .. n - 1] ]
-  where xks = partitions (1.0 / fromIntegral n) 0 [0 .. n]
+bjis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+bjis a b c !dx k xks =
+  [ bij a b c (xi + dx) xi dx k | !xi <- init xks ]
 
-lis :: (Fractional a, Ord a) => Int -> Func a -> a -> a -> [a]
-lis n f k ur =
-  [ li f (xks !! i) (1.0 / fromIntegral n) k | i <- [0 .. n - 1] ] ++ [ur]
-  where xks = partitions (1.0 / fromIntegral n) 0 [0 .. n]
+lis :: (Fractional a, Ord a) => Func a -> a -> a -> a -> [a] -> [a]
+lis f !dx k ur xks =
+  [ li f xi dx k | !xi <- init xks ] ++ [ur]
 
 solve :: (Fractional a, Ord a)
   => Func a
@@ -78,10 +79,10 @@ solve :: (Fractional a, Ord a)
   -> a
   -> [(a, a)]
 solve a b c f n k l ur =
-  let bijList = bijs n a b c k
-      biiList = biis n a b c k
-      bjiList = bjis n a b c k
-      liList  = lis n f l ur
-  in  zip 
-    (partitions (1.0 / fromIntegral n) 0 [0 .. n])
-    (solveM bijList biiList bjiList liList)
+  let !dx = 1.0 / fromIntegral n
+      xks = partitions dx 0 [0 .. n]
+      bijList = bijs a b c dx k xks
+      biiList = biis a b c dx k xks
+      bjiList = bjis a b c dx k xks
+      liList  = lis f dx l ur xks
+  in  zip xks (solveM bijList biiList bjiList liList)
