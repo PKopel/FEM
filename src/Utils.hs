@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Utils
   ( ignStr
@@ -21,10 +22,12 @@ module Utils
   )
 where
 
-type Func a = a -> a
-type Operator = String
+import           Data.Text (Text)
 
-ignStr :: String -> IO ()
+type Func a = a -> a
+type Operator = Text
+
+ignStr :: Text -> IO ()
 ignStr _ = return ()
 
 hasGtPrecedence :: Operator -> Operator -> Bool
@@ -53,7 +56,7 @@ comparePrecedence _   "-" = LT
 comparePrecedence _   _   = EQ
 
 
-isOperator :: String -> Bool
+isOperator :: Text -> Bool
 isOperator =
   (`elem` ["+", "-", "*", "/", "^", "sin", "cos", "ln", "tan", "cot", "(", ")"])
 

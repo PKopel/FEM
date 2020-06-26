@@ -25,6 +25,7 @@ dependencies:
 - Chart-diagrams
 - QuickCheck
 - deepseq
+- text
 library:
   source-dirs: src
 

@@ -1,4 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
+
+import           Data.Monoid ((<>))
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
 
 import           FEM
 import           Parser
@@ -15,13 +22,13 @@ main :: IO ()
 main = do
   args                             <- getArgs
   (a, b, c, f, n, k, l, ur, fName) <- if not (null args)
-    then openFile (head args) ReadMode >>= fileInput (head args) ignStr
-    else fileInput "chart" putStrLn stdin
-  toFile def (fName ++ ".svg") $ 
+    then openFile (head args) ReadMode >>= fileInput (T.pack $head args) ignStr
+    else fileInput "chart" TIO.putStrLn stdin
+  toFile def (T.unpack fName <> ".svg") $ 
     plot (line "u(x)" [solve a b c f n k l ur])
 
-fileInput :: String
-  -> (String -> IO ())
+fileInput :: Text
+  -> (Text -> IO ())
   -> Handle
   -> IO
        ( DFunc
@@ -32,7 +39,7 @@ fileInput :: String
        , Double
        , Double
        , Double
-       , String
+       , Text
        )
 fileInput fileName msgFunc handle = do
   a  <- hReadFunc handle msgFunc "enter a(x):"
@@ -44,22 +51,23 @@ fileInput fileName msgFunc handle = do
   l  <- hReadNum handle msgFunc "enter l:"
   ur <- hReadNum handle msgFunc "enter ur:"
   hClose handle
-  return (a, b, c, f, n, k, l, ur, takeWhile (/= '.') fileName)
+  return (a, b, c, f, n, k, l, ur, T.takeWhile (/= '.') fileName)
 
+errorMsg :: Text
 errorMsg = "wrong input, "
 
-hReadNum :: (Num a, Read a) => Handle -> (String -> IO ()) -> String -> IO a
+hReadNum :: (Num a, Read a) => Handle -> (Text -> IO ()) -> Text -> IO a
 hReadNum handle msgFunc msg =
   msgFunc msg >> reads <$> hGetLine handle >>= checkNum msg
 
-checkNum :: (Num a, Read a) => String -> [(a, String)] -> IO a
+checkNum :: (Num a, Read a) => Text -> [(a, String)] -> IO a
 checkNum _   [(n, "")] = return n
-checkNum msg _         = hReadNum stdin putStrLn $ errorMsg ++ msg
+checkNum msg _         = hReadNum stdin TIO.putStrLn $ errorMsg <> msg
 
-hReadFunc :: Handle -> (String -> IO ()) -> String -> IO DFunc
+hReadFunc :: Handle -> (Text -> IO ()) -> Text -> IO DFunc
 hReadFunc handle msgFunc msg =
-  msgFunc msg >> parseRPN . parseToRPN <$> hGetLine handle >>= checkFunc msg
+  msgFunc msg >> parseRPN . parseToRPN <$> TIO.hGetLine handle >>= checkFunc msg
 
-checkFunc :: String -> [DFunc] -> IO DFunc
+checkFunc :: Text -> [DFunc] -> IO DFunc
 checkFunc _   [f] = return f
-checkFunc msg _   = hReadFunc stdin putStrLn $ errorMsg ++ msg
+checkFunc msg _   = hReadFunc stdin TIO.putStrLn $ errorMsg <> msg

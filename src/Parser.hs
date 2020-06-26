@@ -1,21 +1,26 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Parser
   ( parseRPN
   , parseToRPN
   )
 where
 
+import           Data.Text (Text)
+import qualified Data.Text        as T
+import qualified Data.Text.Read   as TR
 import           Data.Char
 import           Utils
 
-parseToRPN :: String -> String
-parseToRPN = unwords . shunt ([], []) . words
+parseToRPN :: Text -> Text
+parseToRPN = T.unwords . shunt ([], []) . T.words
 
-shunt :: ([String], [Operator]) -> [String] -> [String]
+shunt :: ([Text], [Operator]) -> [Text] -> [Text]
 shunt (out, ops) [] = reverse out ++ ops
 shunt (out, ops) (x : rest) | isOperator x = shunt (shuntOp (out, ops) x) rest
                             | otherwise    = shunt (x : out, ops) rest
 
-shuntOp :: ([String], [Operator]) -> Operator -> ([String], [Operator])
+shuntOp :: ([Text], [Operator]) -> Operator -> ([Text], [Operator])
 shuntOp (out, "(" : ops) ")" = (out, ops)
 shuntOp (out, op : ops ) ")" = shuntOp (op : out, ops) ")"
 shuntOp (out, op : ops) x
@@ -27,10 +32,10 @@ shuntOp (out, op : ops) x
   = (out, x : op : ops)
 shuntOp (out, ops) op = (out, op : ops)
 
-parseRPN :: String -> [Func Double]
-parseRPN = foldl parse [] . words
+parseRPN :: Text -> [Func Double]
+parseRPN = foldl parse [] . T.words
 
-parse :: [Func Double] -> String -> [Func Double]
+parse :: [Func Double] -> Text -> [Func Double]
 parse (f : g : hs) "*"   = (f #* g) : hs
 parse (f : g : hs) "+"   = (f #+ g) : hs
 parse (f : g : hs) "-"   = (g #- f) : hs
@@ -43,4 +48,6 @@ parse (f     : hs) "tan" = (tan . f) : hs
 parse (f     : hs) "cot" = (cot . f) : hs
 parse fs           "e"   = const (exp 1) : fs
 parse fs           "pi"  = const pi : fs
-parse fs x = if isLetter $ head x then id : fs else (\_ -> read x) : fs
+parse fs x = if isLetter $ T.head x then id : fs else funx : fs
+      where funx = (\_ -> case TR.double x of Right (n, _) -> n
+                                              Left _ -> 1)
