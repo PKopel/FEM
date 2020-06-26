@@ -2,10 +2,10 @@
 
 module Main where
 
-import           Data.Monoid ((<>))
-import           Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import           Data.Monoid                    ( (<>) )
+import           Data.Text                      ( Text )
+import qualified Data.Text                     as T
+import qualified Data.Text.IO                  as TIO
 
 import           FEM
 import           Parser
@@ -22,25 +22,15 @@ main :: IO ()
 main = do
   args                             <- getArgs
   (a, b, c, f, n, k, l, ur, fName) <- if not (null args)
-    then openFile (head args) ReadMode >>= fileInput (T.pack $head args) ignStr
+    then openFile (head args) ReadMode >>= fileInput (T.pack $ head args) ignStr
     else fileInput "chart" TIO.putStrLn stdin
-  toFile def (T.unpack fName <> ".svg") $ 
-    plot (line "u(x)" [solve a b c f n k l ur])
+  toFile def (T.unpack fName <> ".svg")
+    $ plot (line "u(x)" [solve a b c f n k l ur])
 
 fileInput :: Text
   -> (Text -> IO ())
   -> Handle
-  -> IO
-       ( DFunc
-       , DFunc
-       , DFunc
-       , DFunc
-       , Int
-       , Double
-       , Double
-       , Double
-       , Text
-       )
+  -> IO (DFunc, DFunc, DFunc, DFunc, Int, Double, Double, Double, Text)
 fileInput fileName msgFunc handle = do
   a  <- hReadFunc handle msgFunc "enter a(x):"
   b  <- hReadFunc handle msgFunc "enter b(x):"

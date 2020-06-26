@@ -6,9 +6,9 @@ module Parser
   )
 where
 
-import           Data.Text (Text)
-import qualified Data.Text        as T
-import qualified Data.Text.Read   as TR
+import           Data.Text                      ( Text )
+import qualified Data.Text                     as T
+import qualified Data.Text.Read                as TR
 import           Data.Char
 import           Utils
 
@@ -48,6 +48,10 @@ parse (f     : hs) "tan" = (tan . f) : hs
 parse (f     : hs) "cot" = (cot . f) : hs
 parse fs           "e"   = const (exp 1) : fs
 parse fs           "pi"  = const pi : fs
-parse fs x = if isLetter $ T.head x then id : fs else funx : fs
-      where funx = (\_ -> case TR.double x of Right (n, _) -> n
-                                              Left _ -> 1)
+parse fs           x     = if isLetter $ T.head x then id : fs else funx : fs
+ where
+  funx =
+    (\_ -> case TR.double x of
+      Right (n, _) -> n
+      Left  _      -> 1
+    )

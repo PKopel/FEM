@@ -22,7 +22,7 @@ module Utils
   )
 where
 
-import           Data.Text (Text)
+import           Data.Text                      ( Text )
 
 type Func a = a -> a
 type Operator = Text
@@ -105,4 +105,4 @@ solveM as bs cs rs = reverse xs
   d i = b i - (a i * c' (i - 1))
   cs' = c 0 / b 0 : [ c i / d i | i <- [1 .. n - 2] ]
   rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / d i | i <- [1 .. n - 1] ]
-  xs = last rs' : [ r' i - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]
+  xs  = last rs' : [ r' i - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]
