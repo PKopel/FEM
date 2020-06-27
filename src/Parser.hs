@@ -24,18 +24,18 @@ shuntOp :: ([Text], [Operator]) -> Operator -> ([Text], [Operator])
 shuntOp (out, "(" : ops) ")" = (out, ops)
 shuntOp (out, op : ops ) ")" = shuntOp (op : out, ops) ")"
 shuntOp (out, op : ops) x
-  | (op `hasGtPrecedence` x && (not . isFunction) x)
-    || (op `hasEqPrecedence` x && isLeftAssociative x)
+  | (op ->- x && (not . isFunction) x)
+    || (op -=- x && isLeftAssociative x)
     || (isFunction op && x /= "(")
   = shuntOp (op : out, ops) x
   | otherwise
   = (out, x : op : ops)
 shuntOp (out, ops) op = (out, op : ops)
 
-parseRPN :: Text -> [Func Double]
+parseRPN :: Text -> [DFunc]
 parseRPN = foldl parse [] . T.words
 
-parse :: [Func Double] -> Text -> [Func Double]
+parse :: [DFunc] -> Text -> [DFunc]
 parse (f : g : hs) "*"   = (f #* g) : hs
 parse (f : g : hs) "+"   = (f #+ g) : hs
 parse (f : g : hs) "-"   = (g #- f) : hs
@@ -50,8 +50,7 @@ parse fs           "e"   = const (exp 1) : fs
 parse fs           "pi"  = const pi : fs
 parse fs           x     = if isLetter $ T.head x then id : fs else funx : fs
  where
-  funx =
-    (\_ -> case TR.double x of
-      Right (n, _) -> n
-      Left  _      -> 1
-    )
+  funx _ = case TR.double x of
+    Right (n, _) -> n
+    Left  _      -> 1
+

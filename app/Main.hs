@@ -16,8 +16,6 @@ import           Utils
 import           Graphics.Rendering.Chart.Backend.Diagrams
 import           Graphics.Rendering.Chart.Easy
 
-type DFunc = Func Double
-
 main :: IO ()
 main = do
   args                             <- getArgs

@@ -7,14 +7,14 @@ where
 
 import           Utils
 
-e :: (Fractional a, Ord a) => a -> a -> a -> a
+e :: (Fractional a, Ord a) => a -> a -> Func a
 e xk dx x | x < xk && x > xk - dx  = (x - xk + dx) / dx
           | x >= xk && x < xk + dx = (xk + dx - x) / dx
           | otherwise              = 0
 
-e' :: (Fractional a, Ord a) => a -> a -> a -> a
-e' xk dx x | x < xk && x > xk - dx = 1 / dx
-           | x > xk && x < xk + dx = -1 / dx
+e' :: (Fractional a, Ord a) => a -> a -> Func a
+e' xk dx x | x < xk && x > xk - dx  = 1 / dx
+           | x >= xk && x < xk + dx = -1 / dx
            | otherwise             = 0
 
 bij :: (Fractional a, Ord a)
@@ -52,17 +52,14 @@ li f !xi !dx !l = result
     else (xi - dx, xi + dx)
   !result = integral (f #* e xi dx) s t - (l * e xi dx 0)
 
-bijs
-  :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+bijs :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
 bijs a b c !dx k xks =
   [ bij a b c xi (xi + dx) dx k | !xi <- init $ init xks ] ++ [0.0]
 
-biis
-  :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+biis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
 biis a b c !dx k xks = [ bij a b c xi xi dx k | !xi <- init xks ] ++ [1.0]
 
-bjis
-  :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
+bjis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
 bjis a b c !dx k xks = [ bij a b c (xi + dx) xi dx k | !xi <- init xks ]
 
 lis :: (Fractional a, Ord a) => Func a -> a -> a -> a -> [a] -> [a]

@@ -6,8 +6,8 @@ module Utils
   , integral
   , solveM
   , partitions
-  , hasGtPrecedence
-  , hasEqPrecedence
+  , (->-)
+  , (-=-)
   , isFunction
   , isOperator
   , isLeftAssociative
@@ -18,6 +18,7 @@ module Utils
   , (#^)
   , cot
   , Func
+  , DFunc
   , Operator
   )
 where
@@ -25,16 +26,17 @@ where
 import           Data.Text                      ( Text )
 
 type Func a = a -> a
+type DFunc = Func Double
 type Operator = Text
 
 ignStr :: Text -> IO ()
 ignStr _ = return ()
 
-hasGtPrecedence :: Operator -> Operator -> Bool
-hasGtPrecedence op1 op2 = comparePrecedence op1 op2 == GT
+(->-) :: Operator -> Operator -> Bool
+op1 ->- op2 = comparePrecedence op1 op2 == GT
 
-hasEqPrecedence :: Operator -> Operator -> Bool
-hasEqPrecedence op1 op2 = comparePrecedence op1 op2 == EQ
+(-=-) :: Operator -> Operator -> Bool
+op1 -=- op2 = comparePrecedence op1 op2 == EQ
 
 comparePrecedence :: Operator -> Operator -> Ordering
 comparePrecedence "(" _   = LT
