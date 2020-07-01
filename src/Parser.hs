@@ -36,11 +36,11 @@ parseRPN :: Text -> [DFunc]
 parseRPN = foldl parse [] . T.words
 
 parse :: [DFunc] -> Text -> [DFunc]
-parse (f : g : hs) "*"   = (f #* g) : hs
-parse (f : g : hs) "+"   = (f #+ g) : hs
-parse (f : g : hs) "-"   = (g #- f) : hs
-parse (f : g : hs) "/"   = (g #/ f) : hs
-parse (f : g : hs) "^"   = (g #^ f) : hs
+parse (f : g : hs) "*"   = (f \* g) : hs
+parse (f : g : hs) "+"   = (f \+ g) : hs
+parse (f : g : hs) "-"   = (g \- f) : hs
+parse (f : g : hs) "/"   = (g \/ f) : hs
+parse (f : g : hs) "^"   = (g \^ f) : hs
 parse (f     : hs) "ln"  = (log . f) : hs
 parse (f     : hs) "sin" = (sin . f) : hs
 parse (f     : hs) "cos" = (cos . f) : hs

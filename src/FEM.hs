@@ -2,6 +2,10 @@
 
 module FEM
   ( solve
+  , e
+  , e'
+  , bij
+  , li
   )
 where
 
@@ -38,10 +42,10 @@ bij a b c !xi !xj !dx !k = result
   !result =
     (-1)
       * k
-      * (u #* v) 0
-      - integral (a #* u' #* v') s t
-      + integral (b #* u' #* v)  s t
-      + integral (c #* u #* v)   s t
+      * (u \* v) 0
+      - integral (a \* u' \* v') s t
+      + integral (b \* u' \* v)  s t
+      + integral (c \* u \* v)   s t
 
 
 li :: (Fractional a, Ord a) => Func a -> a -> a -> a -> a
@@ -50,20 +54,23 @@ li f !xi !dx !l = result
   (!s, !t) = if xi == 0 || xi == 1
     then (max 0 (xi - dx), min 1 (xi + dx))
     else (xi - dx, xi + dx)
-  !result = integral (f #* e xi dx) s t - (l * e xi dx 0)
+  !result = integral (f \* e xi dx) s t - (l * e xi dx 0)
 
 bijs :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
 bijs a b c !dx k xks =
   [ bij a b c xi (xi + dx) dx k | !xi <- init $ init xks ] ++ [0.0]
 
 biis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
-biis a b c !dx k xks = [ bij a b c xi xi dx k | !xi <- init xks ] ++ [1.0]
+biis a b c !dx k xks = 
+  [ bij a b c xi xi dx k | !xi <- init xks ] ++ [1.0]
 
 bjis :: (Fractional a, Ord a) => Func a -> Func a -> Func a -> a -> a -> [a] -> [a]
-bjis a b c !dx k xks = [ bij a b c (xi + dx) xi dx k | !xi <- init xks ]
+bjis a b c !dx k xks = 
+  [ bij a b c (xi + dx) xi dx k | !xi <- init xks ]
 
 lis :: (Fractional a, Ord a) => Func a -> a -> a -> a -> [a] -> [a]
-lis f !dx k ur xks = [ li f xi dx k | !xi <- init xks ] ++ [ur]
+lis f !dx k ur xks = 
+  [ li f xi dx k | !xi <- init xks ] ++ [ur]
 
 solve :: (Fractional a, Ord a)
   => Func a
@@ -82,4 +89,4 @@ solve a b c f n k l ur =
       biiList = biis a b c dx k xks
       bjiList = bjis a b c dx k xks
       liList  = lis f dx l ur xks
-  in  zip xks (solveM bijList biiList bjiList liList)
+  in  zip xks (solveThomas bijList biiList bjiList liList)

@@ -1,26 +1,13 @@
 import           Test.QuickCheck
-import           Utils
-
-prop_solveM :: Int -> Property
-prop_solveM n =
-  2 < n
-    ==> let ones   = replicate n 1
-            zeroes = replicate n 0
-        in  solveM zeroes ones zeroes ones == ones
-
-prop_partitions :: Double -> Double -> [Int] -> Bool
-prop_partitions d start list =
-  partitions d start list == [ d * fromIntegral x + start | x <- list ]
-
-prop_integral :: Double -> Property
-prop_integral p =
-  p >= 1 ==> abs (integral (** p) 0 1 - (1 / (p + 1))) < 0.1
+import           UtilsTest
+import           FEMTest
+import           ParserTest
 
 main :: IO ()
 main = do
-  putStrLn "\n*** Testing solveM... ***"
-  quickCheck prop_solveM
-  putStrLn "\n*** Testing partitions... ***"
-  quickCheck prop_partitions
-  putStrLn "\n*** Testing integral... ***"
-  quickCheck prop_integral
+  putStrLn "\n*** Testing module Utils... ***"
+  testUtils
+  putStrLn "\n*** Testing module Parser... ***"
+  testParser
+  putStrLn "\n*** Testing module FEM... ***"
+  testFEM

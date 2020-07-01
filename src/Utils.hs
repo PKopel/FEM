@@ -1,21 +1,20 @@
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE BangPatterns,OverloadedStrings #-}
 
 module Utils
   ( ignStr
   , integral
-  , solveM
+  , solveThomas
   , partitions
   , (->-)
   , (-=-)
   , isFunction
   , isOperator
   , isLeftAssociative
-  , (#*)
-  , (#/)
-  , (#+)
-  , (#-)
-  , (#^)
+  , (\*)
+  , (\/)
+  , (\+)
+  , (\-)
+  , (\^)
   , cot
   , Func
   , DFunc
@@ -75,26 +74,26 @@ integral :: (Fractional a) => Func a -> a -> a -> a
 integral f !a !b = d * sum [ f x | x <- partitions d a [1 .. 999] ]
   where !d = (b - a) / 999
 
-(#*) :: (Fractional a) => Func a -> Func a -> Func a
-f #* g = (*) <$> f <*> g
+(\*) :: (Fractional a) => Func a -> Func a -> Func a
+f \* g = (*) <$> f <*> g
 
-(#/) :: (Fractional a) => Func a -> Func a -> Func a
-f #/ g = (/) <$> f <*> g
+(\/) :: (Fractional a) => Func a -> Func a -> Func a
+f \/ g = (/) <$> f <*> g
 
-(#+) :: (Fractional a) => Func a -> Func a -> Func a
-f #+ g = (+) <$> f <*> g
+(\+) :: (Fractional a) => Func a -> Func a -> Func a
+f \+ g = (+) <$> f <*> g
 
-(#-) :: (Fractional a) => Func a -> Func a -> Func a
-f #- g = (-) <$> f <*> g
+(\-) :: (Fractional a) => Func a -> Func a -> Func a
+f \- g = (-) <$> f <*> g
 
-(#^) :: (Floating a) => Func a -> Func a -> Func a
-f #^ g = (**) <$> f <*> g
+(\^) :: (Floating a) => Func a -> Func a -> Func a
+f \^ g = (**) <$> f <*> g
 
 cot :: (Floating a) => a -> a
 cot x = 1 / tan x
 
-solveM :: (Fractional a) => [a] -> [a] -> [a] -> [a] -> [a]
-solveM as bs cs rs = reverse xs
+solveThomas :: (Fractional a) => [a] -> [a] -> [a] -> [a] -> [a]
+solveThomas as bs cs rs = reverse xs
  where
   n = length bs
   a i = as !! (i - 1)
