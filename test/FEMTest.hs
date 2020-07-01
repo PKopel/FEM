@@ -13,7 +13,7 @@ prop_e a b c = case abs a - c of
 prop_e' :: Double -> Double -> Double -> Bool
 prop_e' a b c = case abs a - c of
     0 -> e' a b c == 0
-    y -> if y > b then abs $ e' a b c == 1 else e' a b c == 0
+    y -> if y > b then abs (e' a b c) == 1 else e' a b c == 0
 
 prop_bij :: Double -> Double -> Double -> Bool
 prop_bij a b c = if abs (a - b) < 2 * c 
