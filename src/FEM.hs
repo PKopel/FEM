@@ -17,8 +17,8 @@ e xk dx x | x < xk && x > xk - dx  = (x - xk + dx) / dx
           | otherwise              = 0
 
 e' :: (Fractional a, Ord a) => a -> a -> Func a
-e' xk dx x | x < xk && x > xk - dx  = 1 / dx
-           | x >= xk && x < xk + dx = -1 / dx
+e' xk dx x | x < xk && x > xk - dx = 1 / dx
+           | x > xk && x < xk + dx = -1 / dx
            | otherwise             = 0
 
 bij :: (Fractional a, Ord a)

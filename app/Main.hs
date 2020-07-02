@@ -56,6 +56,6 @@ hReadFunc :: Handle -> (Text -> IO ()) -> Text -> IO DFunc
 hReadFunc handle msgFunc msg =
   msgFunc msg >> parseRPN . parseToRPN <$> TIO.hGetLine handle >>= checkFunc msg
 
-checkFunc :: Text -> [DFunc] -> IO DFunc
-checkFunc _   [f] = return f
-checkFunc msg _   = hReadFunc stdin TIO.putStrLn $ errorMsg <> msg
+checkFunc :: Text -> Either Text DFunc -> IO DFunc
+checkFunc _   (Right f)  = return f
+checkFunc msg (Left err) = hReadFunc stdin TIO.putStrLn $ errorMsg <> err <> msg 
