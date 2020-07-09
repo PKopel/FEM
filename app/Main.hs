@@ -23,9 +23,10 @@ main = do
     then openFile (head args) ReadMode >>= fileInput (T.pack $ head args) ignStr
     else fileInput "chart" TIO.putStrLn stdin
   toFile def (T.unpack fName <> ".svg")
-    $ plot (line "u(x)" [solve a b c f n k l ur])
+    $ plot (line "u(x)" [solve (EC a b c f k l ur) n])
 
-fileInput :: Text
+fileInput
+  :: Text
   -> (Text -> IO ())
   -> Handle
   -> IO (DFunc, DFunc, DFunc, DFunc, Int, Double, Double, Double, Text)
@@ -57,5 +58,6 @@ hReadFunc handle msgFunc msg =
   msgFunc msg >> parseRPN . parseToRPN <$> TIO.hGetLine handle >>= checkFunc msg
 
 checkFunc :: Text -> Either Text DFunc -> IO DFunc
-checkFunc _   (Right f)  = return f
-checkFunc msg (Left err) = hReadFunc stdin TIO.putStrLn $ errorMsg <> err <> msg 
+checkFunc _ (Right f) = return f
+checkFunc msg (Left err) =
+  hReadFunc stdin TIO.putStrLn $ errorMsg <> err <> msg

@@ -35,11 +35,11 @@ shuntOp (out, ops) op = (out, op : ops)
 
 parseRPN :: Text -> Either Text DFunc
 parseRPN text = case (foldM parse [] . T.words) text of
-           Right [fun] -> Right fun
-           Right _     -> Left "input is not a single function"
-           Left msg    -> Left msg
+  Right [fun] -> Right fun
+  Right _     -> Left "input is not a single function"
+  Left  msg   -> Left msg
 
-parse :: [DFunc]  -> Text -> Either Text [DFunc]
+parse :: [DFunc] -> Text -> Either Text [DFunc]
 parse (f : g : hs) "*"   = Right $ (f \* g) : hs
 parse (f : g : hs) "+"   = Right $ (f \+ g) : hs
 parse (f : g : hs) "-"   = Right $ (g \- f) : hs
@@ -52,10 +52,9 @@ parse (f     : hs) "tan" = Right $ (tan . f) : hs
 parse (f     : hs) "cot" = Right $ (cot . f) : hs
 parse fs           "e"   = Right $ const (exp 1) : fs
 parse fs           "pi"  = Right $ const pi : fs
-parse fs           x     = 
-  if isLetter $ T.head x 
-  then Right $ id : fs 
+parse fs           x     = if isLetter $ T.head x
+  then Right $ id : fs
   else case TR.double x of
-       Right (n, _) -> Right $ (\_ -> n) : fs
-       Left msg     -> Left $ T.pack msg
+    Right (n, _) -> Right $ (\_ -> n) : fs
+    Left  msg    -> Left $ T.pack msg
 

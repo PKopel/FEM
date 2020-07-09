@@ -5,6 +5,9 @@ module FEMTest
 import           Test.QuickCheck
 import           FEM
 
+simpleEC :: EdgeCond Double
+simpleEC = EC id id id id 1 0 0
+
 prop_e :: Double -> Double -> Double -> Property
 prop_e a b c = b > 0 ==> case abs (a - c) of
     0 -> eabc == 1
@@ -21,10 +24,10 @@ prop_bij :: Double -> Double -> Double -> Property
 prop_bij a b c = c > 0 ==> if abs (a - b) < 2 * c 
                  then bijabc /= 0
                  else bijabc == 0
-                 where bijabc = bij id id id a b c 1
+                 where bijabc = bij simpleEC a b c
 
 prop_li :: Double -> Double -> Property
-prop_li a b = b > 0 ==> li id a b 0 /= 0
+prop_li a b = b > 0 ==> li simpleEC a b /= 0
 
 testFEM :: IO ()
 testFEM = do
