@@ -40,21 +40,26 @@ parseRPN text = case (foldM parse [] . T.words) text of
   Left  msg   -> Left msg
 
 parse :: [DFunc] -> Text -> Either Text [DFunc]
-parse (f : g : hs) "*"   = Right $ (f \* g) : hs
-parse (f : g : hs) "+"   = Right $ (f \+ g) : hs
-parse (f : g : hs) "-"   = Right $ (g \- f) : hs
-parse (f : g : hs) "/"   = Right $ (g \/ f) : hs
-parse (f : g : hs) "^"   = Right $ (g \^ f) : hs
-parse (f     : hs) "ln"  = Right $ (log . f) : hs
-parse (f     : hs) "sin" = Right $ (sin . f) : hs
-parse (f     : hs) "cos" = Right $ (cos . f) : hs
-parse (f     : hs) "tan" = Right $ (tan . f) : hs
-parse (f     : hs) "cot" = Right $ (cot . f) : hs
-parse fs           "e"   = Right $ const (exp 1) : fs
-parse fs           "pi"  = Right $ const pi : fs
-parse fs           x     = if isLetter $ T.head x
-  then Right $ id : fs
-  else case TR.double x of
+parse fs x
+  | x == "e" = Right $ const (exp 1) : fs
+  | x == "pi" = Right $ const pi : fs
+  | isFunction x && length fs > 0 = Right $ parseFun fs x
+  | isOperator x && length fs > 1 = Right $ parseOp fs x
+  | isLetter $ T.head x = Right $ id : fs
+  | otherwise = case TR.double x of
     Right (n, _) -> Right $ (\_ -> n) : fs
     Left  msg    -> Left $ T.pack msg
 
+parseFun :: [DFunc] -> Text -> [DFunc]
+parseFun (f : hs) "ln"  = (log . f) : hs
+parseFun (f : hs) "sin" = (sin . f) : hs
+parseFun (f : hs) "cos" = (cos . f) : hs
+parseFun (f : hs) "tan" = (tan . f) : hs
+parseFun (f : hs) "cot" = (cot . f) : hs
+
+parseOp :: [DFunc] -> Text -> [DFunc]
+parseOp (f : g : hs) "*" = (f \* g) : hs
+parseOp (f : g : hs) "+" = (f \+ g) : hs
+parseOp (f : g : hs) "-" = (g \- f) : hs
+parseOp (f : g : hs) "/" = (g \/ f) : hs
+parseOp (f : g : hs) "^" = (g \^ f) : hs
