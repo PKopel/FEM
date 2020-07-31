@@ -19,12 +19,12 @@ import           Graphics.Rendering.Chart.Easy
 cli :: [String] -> IO ()
 cli args = do
   (ec, n, fName) <- parseFile args >>= \case
-    Right values -> fileInput (T.pack $ head args) values
-    Left  msg    -> putStrLn msg >> fileInput "chart" Map.empty
+    Right values -> checkInput (T.pack $ head args) values
+    Left  msg    -> putStrLn msg >> checkInput "chart" Map.empty
   toFile def (T.unpack fName <> ".svg") $ plot (line "u(x)" [solve ec n])
 
-fileInput :: Text -> Map Text Text -> IO (EdgeCond Double, Int, Text)
-fileInput fileName values = do
+checkInput :: Text -> Map Text Text -> IO (EdgeCond Double, Int, Text)
+checkInput fileName values = do
   a  <- checkFunc "enter a(x):" $ getFunc "a(x)"
   b  <- checkFunc "enter b(x):" $ getFunc "b(x)"
   c  <- checkFunc "enter c(x):" $ getFunc "c(x)"
@@ -42,10 +42,7 @@ errorMsg :: Text
 errorMsg = "wrong input, "
 
 readNum :: (Num a, Read a) => Text -> IO a
-readNum msg = 
-  TIO.putStrLn msg 
-    >> Just . reads <$> getLine 
-    >>= checkNum msg
+readNum msg = TIO.putStrLn msg >> Just . reads <$> getLine >>= checkNum msg
 
 checkNum :: (Num a, Read a) => Text -> Maybe ([(a, String)]) -> IO a
 checkNum _   (Just [(n, "")]) = return n
@@ -54,7 +51,10 @@ checkNum msg _                = readNum $ errorMsg <> msg
 readFunc :: Text -> IO DFunc
 readFunc msg =
   TIO.putStrLn msg
-    >>  Just . parseRPN . parseToRPN <$> TIO.getLine
+    >>  Just
+    .   parseRPN
+    .   parseToRPN
+    <$> TIO.getLine
     >>= checkFunc msg
 
 checkFunc :: Text -> Maybe (Either Text DFunc) -> IO DFunc
