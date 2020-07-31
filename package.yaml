@@ -1,5 +1,5 @@
 name:                fem
-version:             0.1.4
+version:             0.1.5
 github:              "PKopel/FEM"
 license:             BSD3
 author:              "Paweł Kopel"
@@ -27,6 +27,7 @@ dependencies:
 - deepseq
 - text
 - containers
+- attoparsec
 - haskell-gi-base
 - gi-gtk
 library:

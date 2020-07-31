@@ -3,7 +3,7 @@
 module GUI where
 
 import           Data.Text
-import qualified Data.Map as Map 
+import qualified Data.Map                      as Map
 import qualified GI.Gtk                        as Gtk
 
 gladeFile :: FilePath
@@ -11,22 +11,22 @@ gladeFile = "gui/fem.glade"
 
 gui :: [String] -> IO ()
 gui args = do
-  _                             <- Gtk.init Nothing
+  _ <- Gtk.init Nothing
   putStrLn "creating builder"
-  builder                       <- Gtk.builderNewFromFile (pack gladeFile)
+  builder     <- Gtk.builderNewFromFile (pack gladeFile)
 
-  Just window                   <- getObj builder Gtk.Window "window"
-  Just plot                     <- getObj builder Gtk.Image "plot"
-  Just reset                    <- getObj builder Gtk.Button "reset"
-  Just solve                    <- getObj builder Gtk.Button "solve"
-  entries <-
-    mapM (getObj builder Gtk.Entry)
-         names
-      >>= \entries -> return $ Map.fromList [ (n,en) | (n, Just en) <- Prelude.zip names entries ]
+  Just window <- getObj builder Gtk.Window "window"
+  Just plot   <- getObj builder Gtk.Image "plot"
+  Just reset  <- getObj builder Gtk.Button "reset"
+  Just solve  <- getObj builder Gtk.Button "solve"
+  entries     <- mapM (getObj builder Gtk.Entry) names >>= \entries -> return
+    $ Map.fromList [ (n, en) | (n, Just en) <- Prelude.zip names entries ]
 
-  _ <- Gtk.afterButtonClicked reset $ onResetButtonClick plot entries
+  _ <- Gtk.afterButtonClicked reset $ onResetButtonClicked plot entries
 
-  _ <- Gtk.afterButtonClicked solve $ onSolveButtonClick plot entries
+  _ <- Gtk.afterButtonClicked solve $ onSolveButtonClicked plot entries
+
+  _ <- Gtk.onWidgetDestroy window Gtk.mainQuit
 
   Gtk.widgetShowAll window
   Gtk.main
@@ -38,8 +38,8 @@ gui args = do
       putStrLn . unpack $ "Object named '" <> name <> "' could not be found."
       return Nothing
 
-onResetButtonClick :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
-onResetButtonClick plot entries = do
+onResetButtonClicked :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
+onResetButtonClicked plot entries = do
   Gtk.imageClear plot
   _ <- mapM resetText entries
   return ()
@@ -48,11 +48,11 @@ onResetButtonClick plot entries = do
     buffer <- Gtk.entryGetBuffer entry
     Gtk.entryBufferDeleteText buffer 0 (-1)
 
-onSolveButtonClick :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
-onSolveButtonClick plot entries = do
+onSolveButtonClicked :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
+onSolveButtonClicked plot entries = do
   Gtk.imageClear plot
   values <- mapM getText entries
-  
+
   return ()
  where
   getText entry = do

@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c5c90769ea0451a985d8e326ebdc749cff513d605fafc116137edb8bb72342dd
+-- hash: 91f52e8893b4c41b41c0d462e1ece4806c270f0d136eb9a8cfa452b0fc89e87a
 
 name:           fem
-version:        0.1.4
+version:        0.1.5
 description:    Please see the README on GitHub at <https://github.com/PKopel/fem#readme>
 homepage:       https://github.com/PKopel/FEM#readme
 bug-reports:    https://github.com/PKopel/FEM/issues
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       FEM
+      Files
       Parser
       Utils
   other-modules:
@@ -38,6 +39,7 @@ library
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
     , containers
     , deepseq
@@ -60,6 +62,7 @@ executable fem
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
     , containers
     , deepseq
@@ -84,6 +87,7 @@ test-suite fem-test
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
     , containers
     , deepseq
