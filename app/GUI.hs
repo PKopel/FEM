@@ -76,11 +76,12 @@ onSolveButtonClicked :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
 onSolveButtonClicked image entries = do
   Gtk.imageClear image
   values <- mapM getText entries
-  let Just (ec, n, fName) = checkInput "guiPlot" values
-      fileName            = (T.unpack fName <> ".svg")
-  toFile def fileName $ plot (line "u(x)" [solve ec n])
-  Gtk.imageSetFromFile image (Just fileName)
-  return ()
+  case checkInput "guiPlot" values of
+    Just (ec, n, fName) -> do
+      let fileName = (T.unpack fName <> ".svg")
+      toFile def fileName $ plot (line "u(x)" [solve ec n])
+      Gtk.imageSetFromFile image (Just fileName)
+    Nothing -> return ()
  where
   getText entry = do
     buffer <- Gtk.entryGetBuffer entry
