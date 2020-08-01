@@ -51,15 +51,15 @@ parse fs x
     Left  msg    -> Left $ T.pack msg
 
 parseFun :: [DFunc] -> Text -> [DFunc]
-parseFun (f : hs) "ln"  = (log . f) : hs
-parseFun (f : hs) "sin" = (sin . f) : hs
-parseFun (f : hs) "cos" = (cos . f) : hs
-parseFun (f : hs) "tan" = (tan . f) : hs
-parseFun (f : hs) "cot" = (cot . f) : hs
+parseFun (fx : hs) "ln"  = (log . fx) : hs
+parseFun (fx : hs) "sin" = (sin . fx) : hs
+parseFun (fx : hs) "cos" = (cos . fx) : hs
+parseFun (fx : hs) "tan" = (tan . fx) : hs
+parseFun (fx : hs) "cot" = (cot . fx) : hs
 
 parseOp :: [DFunc] -> Text -> [DFunc]
-parseOp (f : g : hs) "*" = (f \* g) : hs
-parseOp (f : g : hs) "+" = (f \+ g) : hs
-parseOp (f : g : hs) "-" = (g \- f) : hs
-parseOp (f : g : hs) "/" = (g \/ f) : hs
-parseOp (f : g : hs) "^" = (g \^ f) : hs
+parseOp (fx : gx : hs) "*" = (fx \* gx) : hs
+parseOp (fx : gx : hs) "+" = (fx \+ gx) : hs
+parseOp (fx : gx : hs) "-" = (gx \- fx) : hs
+parseOp (fx : gx : hs) "/" = (gx \/ fx) : hs
+parseOp (fx : gx : hs) "^" = (gx \^ fx) : hs

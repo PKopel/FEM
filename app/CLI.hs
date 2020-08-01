@@ -10,7 +10,9 @@ import qualified Data.Text.IO                  as TIO
 
 import           FEM
 import           Parser
-import           Utils
+import           Utils                          ( DFunc
+                                                , EdgeCond(EC)
+                                                )
 import           Files
 
 import           Graphics.Rendering.Chart.Backend.Diagrams

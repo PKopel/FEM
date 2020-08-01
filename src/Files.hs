@@ -25,7 +25,7 @@ parseLine :: Parser (Text, Text)
 parseLine =
   (,)
     <$> (   skipSpace
-        *>  takeTill isHorizontalSpace
+        *>  takeTill ((||) <$> isHorizontalSpace <*> (== ':'))
         <*  skipSpace
         <*  char ':'
         <?> "key"

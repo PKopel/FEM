@@ -9,7 +9,9 @@ import           Control.Monad
 
 import           Files
 import           Parser
-import           Utils
+import           Utils                          ( DFunc
+                                                , EdgeCond(EC)
+                                                )
 import           FEM
 
 import           Graphics.Rendering.Chart.Backend.Diagrams
@@ -26,6 +28,7 @@ gui args = do
 
   Just window      <- getObj builder Gtk.Window "window"
   Just image       <- getObj builder Gtk.Image "plot"
+  Just msgLabel    <- getObj builder Gtk.Label "msgLabel"
   Just resetButton <- getObj builder Gtk.Button "reset"
   Just solveButton <- getObj builder Gtk.Button "solve"
   entries <- mapM (getObj builder Gtk.Entry) names >>= \entries -> return
@@ -37,13 +40,20 @@ gui args = do
       Left  _ -> Map.empty
     )
     (parseFile args)
-  _ <- return $ Map.mapWithKey
-    (\key text -> updateEntryText <$> (Map.lookup key entries) <*> Just text)
-    values
 
-  _ <- Gtk.afterButtonClicked resetButton $ onResetButtonClicked image entries
+  _ <-
+    mapM
+        (\(key, entry) -> case Map.lookup key values of
+          Just text -> updateEntryText entry text
+          Nothing   -> return ()
+        )
+      $ Map.toList entries
 
-  _ <- Gtk.afterButtonClicked solveButton $ onSolveButtonClicked image entries
+  _ <- Gtk.afterButtonClicked resetButton
+    $ onResetButtonClicked image msgLabel entries
+
+  _ <- Gtk.afterButtonClicked solveButton
+    $ onSolveButtonClicked image msgLabel entries
 
   _ <- Gtk.onWidgetDestroy window Gtk.mainQuit
 
@@ -59,12 +69,14 @@ gui args = do
 
 updateEntryText :: Gtk.Entry -> Text -> IO ()
 updateEntryText entry text = do
-  buffer <- Gtk.entryBufferNew (Just text) (fromIntegral $ T.length text)
-  Gtk.entrySetBuffer entry buffer
+  buffer <- Gtk.entryGetBuffer entry
+  Gtk.entryBufferSetText buffer text (-1)
 
-onResetButtonClicked :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
-onResetButtonClicked image entries = do
+onResetButtonClicked
+  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
+onResetButtonClicked image msgLabel entries = do
   Gtk.imageClear image
+  _ <- Gtk.labelSetLabel msgLabel ""
   _ <- mapM resetText entries
   return ()
  where
@@ -72,8 +84,9 @@ onResetButtonClicked image entries = do
     buffer <- Gtk.entryGetBuffer entry
     Gtk.entryBufferDeleteText buffer 0 (-1)
 
-onSolveButtonClicked :: Gtk.Image -> Map.Map Text Gtk.Entry -> IO ()
-onSolveButtonClicked image entries = do
+onSolveButtonClicked
+  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
+onSolveButtonClicked image msgLabel entries = do
   Gtk.imageClear image
   values <- mapM getText entries
   case checkInput "guiPlot" values of
@@ -81,7 +94,7 @@ onSolveButtonClicked image entries = do
       let fileName = (T.unpack fName <> ".svg")
       toFile def fileName $ plot (line "u(x)" [solve ec n])
       Gtk.imageSetFromFile image (Just fileName)
-    Nothing -> return ()
+    Nothing -> Gtk.labelSetLabel msgLabel "wrong input"
  where
   getText entry = do
     buffer <- Gtk.entryGetBuffer entry
