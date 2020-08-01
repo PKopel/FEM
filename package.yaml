@@ -1,5 +1,5 @@
 name:                fem
-version:             0.1.3
+version:             0.2.2
 github:              "PKopel/FEM"
 license:             BSD3
 author:              "Paweł Kopel"
@@ -26,11 +26,15 @@ dependencies:
 - QuickCheck
 - deepseq
 - text
+- containers
+- attoparsec
+- haskell-gi-base
+- gi-gtk
 library:
   source-dirs: src
 
 executables:
-  fem-exe:
+  fem:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

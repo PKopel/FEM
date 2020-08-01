@@ -1,8 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 
 module FEM
-  ( EdgeCond(EC)
-  , solve
+  ( solve
   , e
   , e'
   , bij
@@ -11,14 +10,6 @@ module FEM
 where
 
 import           Utils
-
-data EdgeCond t = EC { a :: Func t
-                     , b :: Func t
-                     , c :: Func t
-                     , f :: Func t
-                     , k :: t
-                     , l :: t
-                     , ur :: t}
 
 e :: (Fractional a, Ord a) => a -> a -> Func a
 e xk dx x | x < xk && x > xk - dx  = (x - xk + dx) / dx

@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a83331dec1cc219d30fd2711b32cf2b29ed65ffe5fc972953a6d1db68096fdf8
+-- hash: 091213af910fe041b6f928568e6ba8c1ccc366f4829be2597d9428c8b8bf0ead
 
 name:           fem
-version:        0.1.3
+version:        0.2.2
 description:    Please see the README on GitHub at <https://github.com/PKopel/fem#readme>
 homepage:       https://github.com/PKopel/FEM#readme
 bug-reports:    https://github.com/PKopel/FEM/issues
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       FEM
+      Files
       Parser
       Utils
   other-modules:
@@ -38,14 +39,20 @@ library
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
+    , containers
     , deepseq
+    , gi-gtk
+    , haskell-gi-base
     , text
   default-language: Haskell2010
 
-executable fem-exe
+executable fem
   main-is: Main.hs
   other-modules:
+      CLI
+      GUI
       Paths_fem
   hs-source-dirs:
       app
@@ -55,9 +62,13 @@ executable fem-exe
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
+    , containers
     , deepseq
     , fem
+    , gi-gtk
+    , haskell-gi-base
     , text
   default-language: Haskell2010
 
@@ -76,8 +87,12 @@ test-suite fem-test
       Chart
     , Chart-diagrams
     , QuickCheck
+    , attoparsec
     , base >=4.7 && <5
+    , containers
     , deepseq
     , fem
+    , gi-gtk
+    , haskell-gi-base
     , text
   default-language: Haskell2010

@@ -16,6 +16,7 @@ module Utils
   , (\-)
   , (\^)
   , cot
+  , EdgeCond(..)
   , Func
   , DFunc
   , Operator
@@ -27,6 +28,15 @@ import           Data.Text                      ( Text )
 type Func a = a -> a
 type DFunc = Func Double
 type Operator = Text
+
+
+data EdgeCond t = EC { a :: Func t
+                     , b :: Func t
+                     , c :: Func t
+                     , f :: Func t
+                     , k :: t
+                     , l :: t
+                     , ur :: t}
 
 ignStr :: Text -> IO ()
 ignStr _ = return ()
