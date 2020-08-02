@@ -4,6 +4,7 @@ module FEMTest
 
 import           Test.QuickCheck
 import           FEM
+import Utils
 
 simpleEC :: EdgeCond Double
 simpleEC = EC id id id id 1 0 0
