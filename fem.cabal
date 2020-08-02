@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 091213af910fe041b6f928568e6ba8c1ccc366f4829be2597d9428c8b8bf0ead
+-- hash: bdf01afff942a3917f3cb7540a34b285d4e0b92e5b25bee935e369e1177d862b
 
 name:           fem
 version:        0.2.2
@@ -45,6 +45,7 @@ library
     , deepseq
     , gi-gtk
     , haskell-gi-base
+    , parallel
     , text
   default-language: Haskell2010
 
@@ -57,7 +58,7 @@ executable fem
   hs-source-dirs:
       app
   default-extensions: BangPatterns
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -fprof-auto -fprof-cafs -Wall
   build-depends:
       Chart
     , Chart-diagrams
@@ -69,6 +70,7 @@ executable fem
     , fem
     , gi-gtk
     , haskell-gi-base
+    , parallel
     , text
   default-language: Haskell2010
 
@@ -94,5 +96,6 @@ test-suite fem-test
     , fem
     , gi-gtk
     , haskell-gi-base
+    , parallel
     , text
   default-language: Haskell2010

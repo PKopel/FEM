@@ -3,7 +3,9 @@ mes.iml
 .stack-work/
 mes.cabal
 *~
-chart.svg
+*.svg
+*.hp
+*.prof
 exe*
 test.*
 report*

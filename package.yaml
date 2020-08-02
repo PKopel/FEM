@@ -27,6 +27,7 @@ dependencies:
 - deepseq
 - text
 - containers
+- parallel
 - attoparsec
 - haskell-gi-base
 - gi-gtk
@@ -41,6 +42,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -fprof-auto
+    - -fprof-cafs
     - -Wall
     default-extensions: BangPatterns
     dependencies:

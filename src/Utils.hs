@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns,OverloadedStrings #-}
+{-# LANGUAGE BangPatterns, OverloadedStrings #-}
 
 module Utils
   ( ignStr
@@ -34,9 +34,9 @@ data EdgeCond t = EC { a :: Func t
                      , b :: Func t
                      , c :: Func t
                      , f :: Func t
-                     , k :: t
-                     , l :: t
-                     , ur :: t}
+                     , k :: !t
+                     , l :: !t
+                     , ur :: !t}
 
 ignStr :: Text -> IO ()
 ignStr _ = return ()
@@ -81,23 +81,23 @@ partitions :: (Fractional a) => a -> a -> [Int] -> [a]
 partitions !d !start = map (\x -> start + d * fromIntegral x)
 
 integral :: (Fractional a) => Func a -> a -> a -> a
-integral f !a !b = d * sum [ f x | x <- partitions d a [1 .. 999] ]
-  where !d = (b - a) / 999
+integral fx !low !high = d * sum [ fx x | x <- partitions d low [1 .. 999] ]
+  where !d = (high - low) / 999
 
 (\*) :: (Fractional a) => Func a -> Func a -> Func a
-f \* g = (*) <$> f <*> g
+fx \* gx = (*) <$> fx <*> gx
 
 (\/) :: (Fractional a) => Func a -> Func a -> Func a
-f \/ g = (/) <$> f <*> g
+fx \/ gx = (/) <$> fx <*> gx
 
 (\+) :: (Fractional a) => Func a -> Func a -> Func a
-f \+ g = (+) <$> f <*> g
+fx \+ gx = (+) <$> fx <*> gx
 
 (\-) :: (Fractional a) => Func a -> Func a -> Func a
-f \- g = (-) <$> f <*> g
+fx \- gx = (-) <$> fx <*> gx
 
 (\^) :: (Floating a) => Func a -> Func a -> Func a
-f \^ g = (**) <$> f <*> g
+fx \^ gx = (**) <$> fx <*> gx
 
 cot :: (Floating a) => a -> a
 cot x = 1 / tan x
@@ -114,6 +114,6 @@ solveThomas as bs cs rs = reverse xs
   c' i = cs' !! i
   r' i = rs' !! i
   d i = b i - (a i * c' (i - 1))
-  cs' = c 0 / b 0 : [ c i / d i | i <- [1 .. n - 2] ]
-  rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / d i | i <- [1 .. n - 1] ]
-  xs  = last rs' : [ r' i - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ]
+  cs' = c 0 / b 0 : [ c i / d i | i <- [1 .. n - 2] ] 
+  rs' = r 0 / b 0 : [ (r i - (a i * r' (i - 1))) / d i | i <- [1 .. n - 1] ] 
+  xs  = last rs' : [ r' i - (c' i * x (n - 2 - i)) | i <- [n - 2, n - 3 .. 0] ] 
