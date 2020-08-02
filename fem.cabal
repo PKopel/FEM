@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bdf01afff942a3917f3cb7540a34b285d4e0b92e5b25bee935e369e1177d862b
+-- hash: 8109b2bb6e06c10371451c1dc34f459fbac5872c8c8b0580181a1e5b444f9b7d
 
 name:           fem
 version:        0.2.2
@@ -58,7 +58,7 @@ executable fem
   hs-source-dirs:
       app
   default-extensions: BangPatterns
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -fprof-auto -fprof-cafs -Wall
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       Chart
     , Chart-diagrams
