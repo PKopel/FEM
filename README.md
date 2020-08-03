@@ -10,7 +10,7 @@ using finite element method with number of elements specified by user.
 
 ## Usage
 
-Program takes one or two arguments: `-gui|-cli` and optional name of .txt file with a(x), b(x), c(x), f(x), number of elements to use, k, l and ur specified, each in separate line, like in example: 
+Program takes one or two arguments: `-gui|-cli` and optional name of .txt file with any combination of a(x), b(x), c(x), f(x), number of elements to use, k, l and ur specified, each in separate line, like in example: 
 ```
 a(x): 	-1 * x ^ 2 - 1
 b(x): 	4 * x + 1
@@ -21,7 +21,7 @@ k: 	-0.5
 l: 	1
 ur: 	0
 ```
-When run with only `-cli`, program will ask for input from user. Program returns chart of u(x) in .svg file, named "chart" for input from cmd, "guiPlot.txt" when used with gui or the same as file passed as an argument.
+When run with only `-cli`, program will ask for input from user. Program returns chart of u(x) in .svg file, named "chart" for input from cmd, "guiPlot" when used with gui or the same as file passed as an argument.
 
 ### Dependencies
 * **[haskell-chart](https://github.com/timbod7/haskell-chart/wiki)**
