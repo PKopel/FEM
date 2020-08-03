@@ -28,6 +28,7 @@ When run with only `-cli`, program will ask for input from user. Program returns
 * **[QuickCheck](https://github.com/nick8325/quickcheck)**
 * **[haskell-gi](https://github.com/haskell-gi/haskell-gi)**
 * **[gi-gtk](https://hackage.haskell.org/package/gi-gtk)**
+* **[Attoparsec](https://hackage.haskell.org/package/attoparsec)**
 
 ### Author
 * **[Paweł Kopel](https://github.com/PKopel)**
