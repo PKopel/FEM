@@ -72,8 +72,10 @@ updateEntryText entry text = do
   buffer <- Gtk.entryGetBuffer entry
   Gtk.entryBufferSetText buffer text (-1)
 
-onResetButtonClicked
-  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
+onResetButtonClicked :: Gtk.Image 
+                     -> Gtk.Label 
+                     -> Map.Map Text Gtk.Entry 
+                     -> IO ()
 onResetButtonClicked image msgLabel entries = do
   Gtk.imageClear image
   _ <- Gtk.labelSetLabel msgLabel ""
@@ -84,8 +86,10 @@ onResetButtonClicked image msgLabel entries = do
     buffer <- Gtk.entryGetBuffer entry
     Gtk.entryBufferDeleteText buffer 0 (-1)
 
-onSolveButtonClicked
-  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
+onSolveButtonClicked :: Gtk.Image
+                     -> Gtk.Label 
+                     -> Map.Map Text Gtk.Entry 
+                     -> IO ()
 onSolveButtonClicked image msgLabel entries = do
   Gtk.imageClear image
   values <- mapM getText entries
@@ -94,7 +98,8 @@ onSolveButtonClicked image msgLabel entries = do
       let fileName = (T.unpack fName <> ".svg")
       toFile def fileName $ plot (line "u(x)" [solve ec n])
       Gtk.imageSetFromFile image (Just fileName)
-    Nothing -> Gtk.labelSetLabel msgLabel "wrong input"
+    Nothing -> do
+      Gtk.labelSetLabel msgLabel "wrong input"
  where
   getText entry = do
     buffer <- Gtk.entryGetBuffer entry
