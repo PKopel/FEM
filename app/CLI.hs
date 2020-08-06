@@ -1,4 +1,5 @@
-{-# LANGUAGE OverloadedStrings, LambdaCase #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module CLI where
 
@@ -7,16 +8,14 @@ import qualified Data.Map                      as Map
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import qualified Data.Text.IO                  as TIO
-
 import           FEM
+import           Files
+import           Graphics.Rendering.Chart.Backend.Diagrams
+import           Graphics.Rendering.Chart.Easy
 import           Parser
 import           Utils                          ( DFunc
                                                 , EdgeCond(EC)
                                                 )
-import           Files
-
-import           Graphics.Rendering.Chart.Backend.Diagrams
-import           Graphics.Rendering.Chart.Easy
 
 cli :: [String] -> IO ()
 cli args = do
@@ -37,7 +36,7 @@ checkInput fileName values = do
   ur <- checkNum "enter ur:" $ getNum "ur"
   return (EC a b c f k l ur, n, T.takeWhile (/= '.') fileName)
  where
-  getFunc key = parseRPN . parseToRPN <$> Map.lookup key values
+  getFunc key = parseRPN . infixToRPN <$> Map.lookup key values
   getNum key = reads <$> T.unpack <$> Map.lookup key values
 
 errorMsg :: Text
@@ -55,7 +54,7 @@ readFunc msg =
   TIO.putStrLn msg
     >>  Just
     .   parseRPN
-    .   parseToRPN
+    .   infixToRPN
     <$> TIO.getLine
     >>= checkFunc msg
 

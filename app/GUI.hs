@@ -1,21 +1,22 @@
-{-# LANGUAGE OverloadedStrings, OverloadedLabels, ScopedTypeVariables, LambdaCase #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedLabels #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module GUI where
 
-import           Data.Text                     as T
-import qualified Data.Map                      as Map
-import qualified GI.Gtk                        as Gtk
 import           Control.Monad
-
+import qualified Data.Map                      as Map
+import           Data.Text                     as T
+import           FEM
 import           Files
+import qualified GI.Gtk                        as Gtk
+import           Graphics.Rendering.Chart.Backend.Diagrams
+import           Graphics.Rendering.Chart.Easy
 import           Parser
 import           Utils                          ( DFunc
                                                 , EdgeCond(EC)
                                                 )
-import           FEM
-
-import           Graphics.Rendering.Chart.Backend.Diagrams
-import           Graphics.Rendering.Chart.Easy
 
 gladeFile :: FilePath
 gladeFile = "gui/fem.glade"
@@ -72,10 +73,8 @@ updateEntryText entry text = do
   buffer <- Gtk.entryGetBuffer entry
   Gtk.entryBufferSetText buffer text (-1)
 
-onResetButtonClicked :: Gtk.Image 
-                     -> Gtk.Label 
-                     -> Map.Map Text Gtk.Entry 
-                     -> IO ()
+onResetButtonClicked
+  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
 onResetButtonClicked image msgLabel entries = do
   Gtk.imageClear image
   _ <- Gtk.labelSetLabel msgLabel ""
@@ -86,10 +85,8 @@ onResetButtonClicked image msgLabel entries = do
     buffer <- Gtk.entryGetBuffer entry
     Gtk.entryBufferDeleteText buffer 0 (-1)
 
-onSolveButtonClicked :: Gtk.Image
-                     -> Gtk.Label 
-                     -> Map.Map Text Gtk.Entry 
-                     -> IO ()
+onSolveButtonClicked
+  :: Gtk.Image -> Gtk.Label -> Map.Map Text Gtk.Entry -> IO ()
 onSolveButtonClicked image msgLabel entries = do
   Gtk.imageClear image
   values <- mapM getText entries
@@ -117,7 +114,7 @@ checkInput fileName values = do
   ur <- checkNum $ getNum "ur"
   return (EC a b c f k l ur, n, T.takeWhile (/= '.') fileName)
  where
-  getFunc key = parseRPN . parseToRPN <$> Map.lookup key values
+  getFunc key = parseRPN . infixToRPN <$> Map.lookup key values
   getNum key = reads <$> T.unpack <$> Map.lookup key values
 
 checkNum :: (Num a, Read a) => Maybe ([(a, String)]) -> Maybe a

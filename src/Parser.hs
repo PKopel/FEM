@@ -2,19 +2,19 @@
 
 module Parser
   ( parseRPN
-  , parseToRPN
+  , infixToRPN
   )
 where
 
+import           Control.Monad
+import           Data.Char
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import qualified Data.Text.Read                as TR
-import           Data.Char
-import           Control.Monad
 import           Utils
 
-parseToRPN :: Text -> Text
-parseToRPN = T.unwords . shunt ([], []) . T.words
+infixToRPN :: Text -> Text
+infixToRPN = T.unwords . shunt ([], []) . T.words
 
 shunt :: ([Text], [Operator]) -> [Text] -> [Text]
 shunt (out, ops) [] = reverse out ++ ops
