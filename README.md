@@ -10,6 +10,8 @@ using finite element method with number of elements specified by user.
 
 ## Usage
 
+`stack exec fem -- -gui | -cli [<file>.txt]`
+
 Program takes one or two arguments: `-gui|-cli` and optional name of .txt file with any combination of a(x), b(x), c(x), f(x), number of elements to use, k, l and ur specified, each in separate line, like in example: 
 ```
 a(x): 	-1 * x ^ 2 - 1
